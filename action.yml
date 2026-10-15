@@ -1,0 +1,69 @@
+name: Molar Guard
+description: >
+  Run affected Playwright tests on PR and post a GitHub Check Run.
+  Zero-config plug-and-play — works with any existing Playwright suite.
+  No .molar.md files, no Clones required.
+author: Molar
+branding:
+  icon: shield
+  color: green
+
+inputs:
+  api-key:
+    description: >
+      Molar API key (from app.molar.it/settings/api-keys).
+      Pass from a workflow secret such as secrets.MOLAR_API_KEY.
+    required: true
+  base-url:
+    description: >
+      URL of the deployed preview/staging app under test.
+      Typically the deploy step output URL (steps.deploy.outputs.url).
+    required: false
+    default: ""
+  scenario-id:
+    description: >
+      Guard scenario UUID to run. Create scenarios in the Guard dashboard or API.
+    required: true
+  head-sha:
+    description: >
+      Optional head commit SHA for workflow_dispatch proofs (defaults to GITHUB_SHA).
+    required: false
+    default: ""
+  base-sha:
+    description: >
+      Optional base commit SHA for workflow_dispatch proofs (defaults to head-sha).
+    required: false
+    default: ""
+  pr-number:
+    description: >
+      Optional PR number label for workflow_dispatch proofs (defaults to 0).
+    required: false
+    default: "0"
+  region:
+    description: >
+      Region queue for the manual run.
+    required: false
+    default: "us-east-1"
+  mode:
+    description: >
+      "required" blocks merge on failure; "advisory" posts a comment only.
+      Start with "advisory" and promote to "required" after 30 days.
+    required: false
+    default: "advisory"
+  timeout-minutes:
+    description: >
+      Maximum time (minutes) to wait for Guard to complete.
+    required: false
+    default: "20"
+
+outputs:
+  run-id:
+    description: "The Guard run ID for this PR"
+  status:
+    description: "Final status: passed | failed | cached_green | flaky"
+  check-url:
+    description: "Link to the Molar dashboard run detail page"
+
+runs:
+  using: node20
+  main: dist/index.js
